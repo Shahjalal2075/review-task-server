@@ -119,6 +119,20 @@ async function run() {
             const result = await users.updateOne(query, updateDoc);
             res.send(result);
         })
+        app.patch('/user-list/training-bal-update/:email', async (req, res) => {
+            const email = req.params.email;
+            const isEmail = email.includes('@');
+            const query = isEmail ? { email: email } : { phone: email };
+            const updateUser = req.body;
+            console.log(query);
+            const updateDoc = {
+                $set: {
+                    trainingBal: updateUser.trainingBal
+                }
+            }
+            const result = await users.updateOne(query, updateDoc);
+            res.send(result);
+        })
         app.patch('/user-list/task-bal-update/:email', async (req, res) => {
             const email = req.params.email;
             const isEmail = email.includes('@');
@@ -242,7 +256,9 @@ async function run() {
             console.log(query);
             const updateDoc = {
                 $set: {
-                    vipLevel: updateUser.vipLevel
+                    vipLevel: updateUser.vipLevel,
+                    trainingBal: updateUser.trainingBal,
+                    totalBal: updateUser.totalBal
                 }
             }
             const result = await users.updateOne(query, updateDoc);
