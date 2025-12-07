@@ -157,6 +157,8 @@ async function run() {
             const updateDoc = {
                 $set: {
                     totalBal: updateUser.totalBal,
+                    trainingBal: updateUser.trainingBal,
+                    redemPoint: updateUser.redemPoint,
                     taskCount: updateUser.taskCount,
                     newBal: updateUser.newBal
                 }
