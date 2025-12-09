@@ -128,7 +128,8 @@ async function run() {
             console.log(query);
             const updateDoc = {
                 $set: {
-                    trainingBal: updateUser.trainingBal
+                    trainingBal: updateUser.trainingBal,
+                    totalBal: updateUser.totalBal,
                 }
             }
             const result = await users.updateOne(query, updateDoc);
