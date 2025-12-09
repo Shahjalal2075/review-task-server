@@ -41,6 +41,7 @@ async function run() {
         const faq = database.collection("faq");
         const announcement = database.collection("announcement");
         const taskRatio = database.collection("taskRatio");
+        const signupBonus = database.collection("signupBonus");
 
         app.get('/user-list', async (req, res) => {
             const cursor = users.find()
@@ -144,6 +145,21 @@ async function run() {
                     totalBal: updateUser.totalBal,
                     taskCount: updateUser.taskCount,
                     newBal: updateUser.newBal
+                }
+            }
+            const result = await users.updateOne(query, updateDoc);
+            res.send(result);
+        })
+        app.patch('/users-bonus/:email', async (req, res) => {
+            const email = req.params.email;
+            const isEmail = email.includes('@');
+            const query = isEmail ? { email: email } : { phone: email };
+            const updateUser = req.body;
+            const updateDoc = {
+                $set: {
+                    totalClaim: updateUser.totalClaim,
+                    lastClaim: updateUser.lastClaim,
+                    totalBal: updateUser.totalBal
                 }
             }
             const result = await users.updateOne(query, updateDoc);
@@ -888,6 +904,30 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/signup-bonus', async (req, res) => {
+            const query = { secret: 'officetimealien' };
+            const result = await signupBonus.findOne(query);
+            res.send(result.bonus);
+        })
+        app.post('/signup-bonus', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await signupBonus.insertOne(user);
+            res.send(result);
+        })
+        app.patch('/signup-bonus/:name', async (req, res) => {
+            const secret = req.params.name;
+            const query = { secret: secret };
+            const updateUser = req.body;
+            console.log(query);
+            const updateDoc = {
+                $set: {
+                    bonus: updateUser.bonus
+                }
+            }
+            const result = await signupBonus.updateOne(query, updateDoc);
+            res.send(result);
+        })
 
 
         /* app.get('/user-list', async (req, res) => {
