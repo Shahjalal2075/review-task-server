@@ -33,6 +33,7 @@ async function run() {
         const tasks = database.collection("tasks");
         const userTasks = database.collection("userTasks");
         const combineTasks = database.collection("combineTasks");
+        const rewardTasks = database.collection("rewardTasks");
         const supportLink = database.collection("supportLink");
         const officeTime = database.collection("officeTime");
         const vipLevel = database.collection("vipLevel");
@@ -388,10 +389,16 @@ async function run() {
             const product = await wallet.findOne(query);
             res.send(product);
         })
-        app.patch('/wallet/:email', async (req, res) => {
+        app.get('/withdraw-wallet/:email', async (req, res) => {
             const email = req.params.email;
             const isEmail = email.includes('@');
             const query = isEmail ? { email: email } : { phone: email };
+            const product = await wallet.find(query).toArray();
+            res.send(product);
+        })
+        app.patch('/wallet/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { username: email };
             const updateUser = req.body;
             console.log(query);
             const updateDoc = {
@@ -631,6 +638,33 @@ async function run() {
             const result = await combineTasks.deleteOne(query);
             res.send(result);
         })
+
+        app.get('/reward-task', async (req, res) => {
+            const cursor = rewardTasks.find()
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/reward-task', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await rewardTasks.insertOne(user);
+            res.send(result);
+        })
+        app.get('/reward-task/:email', async (req, res) => {
+            const email = req.params.email;
+            const isEmail = email.includes('@');
+            const query = isEmail ? { email: email } : { phone: email };
+            const product = await rewardTasks.find(query).toArray();
+            res.send(product);
+        })
+        app.delete('/reward-task/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('delete server id: ', id);
+            const query = { _id: new ObjectId(id) };
+            const result = await rewardTasks.deleteOne(query);
+            res.send(result);
+        })
+
         app.get('/support-link', async (req, res) => {
             const cursor = supportLink.find()
             const result = await cursor.toArray();
