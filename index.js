@@ -43,6 +43,7 @@ async function run() {
         const announcement = database.collection("announcement");
         const taskRatio = database.collection("taskRatio");
         const signupBonus = database.collection("signupBonus");
+        const kycVerify = database.collection("kycVerify");
 
         app.get('/user-list', async (req, res) => {
             const cursor = users.find()
@@ -961,6 +962,17 @@ async function run() {
                 }
             }
             const result = await signupBonus.updateOne(query, updateDoc);
+            res.send(result);
+        })
+        app.get('/kyc-verify', async (req, res) => {
+            const cursor = kycVerify.find()
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/kyc-verify', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await kycVerify.insertOne(user);
             res.send(result);
         })
 
