@@ -44,6 +44,9 @@ async function run() {
         const taskRatio = database.collection("taskRatio");
         const signupBonus = database.collection("signupBonus");
         const kycVerify = database.collection("kycVerify");
+        const slideImage = database.collection("slideImage");
+        const depositAgents = database.collection("depositAgents");
+        const promo = database.collection("promo");
 
         app.get('/user-list', async (req, res) => {
             const cursor = users.find()
@@ -485,19 +488,18 @@ async function run() {
         })
         app.patch('/deposit/:email', async (req, res) => {
             const email = req.params.email;
-            const isEmail = email.includes('@');
-            const query = isEmail ? { email: email } : { phone: email };
+            const query = { _id: new ObjectId(email) };
             const updateUser = req.body;
             console.log(query);
             const updateDoc = {
                 $set: {
-                    walletAddress: updateUser.walletAddress,
-                    realName: updateUser.realName,
+                    status: updateUser.status,
                 }
             }
             const result = await deposit.updateOne(query, updateDoc);
             res.send(result);
         })
+
 
         app.get('/tasks', async (req, res) => {
             const cursor = tasks.find()
@@ -975,7 +977,86 @@ async function run() {
             const result = await kycVerify.insertOne(user);
             res.send(result);
         })
-
+        app.patch('/kyc-verify/:name', async (req, res) => {
+            const name = req.params.name;
+            const query = { username: name };
+            const updateUser = req.body;
+            console.log(query);
+            const updateDoc = {
+                $set: {
+                    status: updateUser.status
+                }
+            }
+            const result = await kycVerify.updateOne(query, updateDoc);
+            res.send(result);
+        })
+        app.patch('/user-list/kyc/:name', async (req, res) => {
+            const name = req.params.name;
+            const query = { username: name };
+            const updateUser = req.body;
+            console.log(query);
+            const updateDoc = {
+                $set: {
+                    isVerify: updateUser.isVerify
+                }
+            }
+            const result = await users.updateOne(query, updateDoc);
+            res.send(result);
+        })
+        app.get('/slideshow', async (req, res) => {
+            const cursor = slideImage.find()
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/slideshow', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await slideImage.insertOne(user);
+            res.send(result);
+        })
+        app.delete('/slideshow/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('delete server id: ', id);
+            const query = { _id: new ObjectId(id) };
+            const result = await slideImage.deleteOne(query);
+            res.send(result);
+        })
+        app.get('/deposit-agent', async (req, res) => {
+            const cursor = depositAgents.find()
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/deposit-agent', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await depositAgents.insertOne(user);
+            res.send(result);
+        })
+        app.delete('/deposit-agent/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('delete server id: ', id);
+            const query = { _id: new ObjectId(id) };
+            const result = await depositAgents.deleteOne(query);
+            res.send(result);
+        })
+        app.get('/promo-code', async (req, res) => {
+            const cursor = promo.find()
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/promo-code', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await promo.insertOne(user);
+            res.send(result);
+        })
+        app.delete('/promo-code/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('delete server id: ', id);
+            const query = { _id: new ObjectId(id) };
+            const result = await promo.deleteOne(query);
+            res.send(result);
+        })
 
         /* app.get('/user-list', async (req, res) => {
             const cursor = users.find()
