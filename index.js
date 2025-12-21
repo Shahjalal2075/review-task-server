@@ -1099,7 +1099,7 @@ async function run() {
         })
         app.delete('/projects/:id', async (req, res) => {
             const id = req.params.id;
-            console.log('delete server id: ', id);
+            console.log('delete server id:', id);
             const query = { _id: new ObjectId(id) };
             const result = await projectsList.deleteOne(query);
             res.send(result);
