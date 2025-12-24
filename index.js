@@ -211,7 +211,9 @@ async function run() {
                 $set: {
                     isCombinationActive: updateUser.isCombinationActive,
                     combinationEndTine: updateUser.combinationEndTine,
-                    frozenBal: updateUser.frozenBal
+                    frozenBal: updateUser.frozenBal,
+                    combination_name: updateUser.combination_name,
+                    profit_type: updateUser.profit_type
                 }
             }
             const result = await users.updateOne(query, updateDoc);
