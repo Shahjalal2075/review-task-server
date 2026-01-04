@@ -27,6 +27,7 @@ async function run() {
 
         const database = client.db("reviewTaskDB");
         const users = database.collection("users");
+        const admin = database.collection("admin");
         const wallet = database.collection("wallet");
         const withdraw = database.collection("withdraw");
         const deposit = database.collection("deposit");
@@ -48,6 +49,31 @@ async function run() {
         const depositAgents = database.collection("depositAgents");
         const promo = database.collection("promo");
 
+        app.get('/admin-list', async (req, res) => {
+            const cursor = admin.find()
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/admin-list', async (req, res) => {
+            const user = req.body;
+            console.log('User Add', user);
+            const result = await admin.insertOne(user);
+            res.send(result);
+        })
+        app.get('/admin-list/:email', async (req, res) => {
+            const email = req.params.email;
+            const isEmail = email.includes('@');
+            const query = isEmail ? { email: email } : { phone: email };
+            const product = await admin.findOne(query);
+            res.send(product);
+        })
+        app.delete('/admin-list/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('delete server id: ', id);
+            const query = { _id: new ObjectId(id) };
+            const result = await admin.deleteOne(query);
+            res.send(result);
+        })
         app.get('/user-list', async (req, res) => {
             const cursor = users.find()
             const result = await cursor.toArray();
